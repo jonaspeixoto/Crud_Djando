@@ -20,7 +20,7 @@ Listagem de clientes
                 <td>{{cliente.sexo}}</td>
                 <td>
                     <a href="{% url 'editar_cliente' id=cliente.id %}">Editar</a>
-                    <a href="#">Remover</a>
+                    <a href="{% url 'remover_cliente' id=cliente.id %}">Remover</a>
                 </td>
             </tr>
             {% endfor %}
