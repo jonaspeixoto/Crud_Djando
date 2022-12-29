@@ -14,6 +14,7 @@ class Cliente():
     def nome(self, nome):
         self.__nome = nome
 
+    #sexo
     @property
     def sexo(self):
         return self.__sexo
