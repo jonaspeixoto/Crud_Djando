@@ -8,33 +8,64 @@ Cadastro de Clientes
     <form method="post">
         {% csrf_token %}
         <div class="form-group">
-            {{ form.nome.errors }}
+            {{ form_cliente.nome.errors }}
             <label>Nome :</label>
-            {{ form.nome | addclass:'form-control'}}
+            {{ form_cliente.nome | addclass:'form-control'}}
         </div>
         <div class="form-group">
-            {{ form.sexo.errors }}
+            {{ form_cliente.sexo.errors }}
             <label>Sexo :</label>
-            {{ form.sexo | addclass:'form-control'}}
+            {{ form_cliente.sexo | addclass:'form-control'}}
         </div>
         <div class="form-group">
-            {{ form.data_nascimento.errors }}
+            {{ form_cliente.data_nascimento.errors }}
             <label>Data de Nacimento :</label>
-            {{ form.data_nascimento | addclass:'form-control' }}
+            {{ form_cliente.data_nascimento | addclass:'form-control' }}
         </div>
         <div class="form-group">
-            {{ form.Email.errors }}
+            {{ form_cliente.Email.errors }}
             <label>Email :</label>
-            {{ form.email | addclass:'form-control'}}
+            {{ form_cliente.email | addclass:'form-control'}}
         </div>
         <div class="form-group">
-            {{ form.Profissão.errors }}
+            {{ form_cliente.Profissão.errors }}
             <label>Profissão :</label>
-            {{ form.profissao | addclass:'form-control' }}
+            {{ form_cliente.profissao | addclass:'form-control' }}
+        </div>
+
+
+        <hr>
+        <h4>Endereço</h4>
+        <div class="form-group">
+            {{ form_endereco.rua.errors }}
+            <label>Rua :</label>
+            {{ form_endereco.rua | addclass:'form-control' }}
+        </div>
+        <div class="form-group">
+            {{ form_endereco.numero.errors }}
+            <label>Numero :</label>
+            {{ form_endereco.numero | addclass:'form-control' }}
+        </div>
+
+        <div class="form-group">
+            {{ form_endereco.bairro.errors }}
+            <label>Bairro :</label>
+            {{ form_endereco.bairro | addclass:'form-control' }}
+        </div>
+        <div class="form-group">
+            {{ form_endereco.cidade.errors }}
+            <label>Cidade :</label>
+            {{ form_endereco.cidade | addclass:'form-control' }}
+        </div>
+        <div class="form-group">
+            {{ form_endereco.pais.errors }}
+            <label>Pais :</label>
+            {{ form_endereco.pais | addclass:'form-control' }}
         </div>
 
         <div class="form-group">
             <input type="submit" name="Cadastrar">
         </div>
+
     </form>
 {% endblock content %}

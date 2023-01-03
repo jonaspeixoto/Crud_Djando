@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.template.context_processors import request
 
 from .models import Cliente
-from .forms import ClientForm
+from .forms import ClientForm, EnderecoForm
 from django.http import HttpResponse
 from .entidades import cliente
 from .service import cliente_service
@@ -16,22 +16,23 @@ def listar_clientes(request):
 
 def inserir_cliente(request):
     if request.method == 'POST':
-        form = ClientForm(request.POST)
-        if form.is_valid():
-            nome = form.cleaned_data["nome"]
-            sexo = form.cleaned_data["sexo"]
+        form_cliente = ClientForm(request.POST)
+        if form_cliente.is_valid():
+            nome = form_cliente.cleaned_data["nome"]
+            sexo = form_cliente.cleaned_data["sexo"]
             print(sexo)
-            data_nascimento = form.cleaned_data["data_nascimento"]
-            email = form.cleaned_data["email"]
-            profissao = form.cleaned_data["profissao"]
+            data_nascimento = form_cliente.cleaned_data["data_nascimento"]
+            email = form_cliente.cleaned_data["email"]
+            profissao = form_cliente.cleaned_data["profissao"]
             cliente_novo = cliente.Cliente(nome=nome, sexo=sexo, data_nascimento=data_nascimento,
                                            email=email, profissao=profissao)
             print(cliente_novo.data_nascimento)
             cliente_service.cadastrar_cliente(cliente_novo)
             return redirect('listar_clientes')
     else:
-        form = ClientForm()
-    return render(request, 'clientes/form_clientes.html', {'form': form})
+        form_cliente = ClientForm()
+        form_endereco = EnderecoForm()
+    return render(request, 'clientes/form_clientes.html', {'form_cliente': form_cliente, 'form_endereco': form_endereco})
 
 
 def listar_cliente_id(request, id):
