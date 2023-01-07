@@ -54,9 +54,12 @@ def listar_cliente_id(request, id):
 
 def editar_cliente(request, id):
     cliente_antigo = cliente_service.listar_cliente_id(id)
-    endereco_antigo = endereco_service.listar_endereco_id(cliente_antigo.endereco.id)
+    if cliente_antigo.endereco == None:
+        form_endereco = EnderecoForm(request.POST or None)
+    else:
+        endereco_antigo = endereco_service.listar_endereco_id(cliente_antigo.endereco.id)
+        form_endereco = EnderecoForm(request.POST or None, instance=endereco_antigo)
     form_cliente = ClientForm(request.POST or None, instance=cliente_antigo)
-    form_endereco = EnderecoForm(request.POST or None, instance=endereco_antigo)
     if form_cliente.is_valid():
         nome = form_cliente.cleaned_data["nome"]
         sexo = form_cliente.cleaned_data["sexo"]
@@ -73,9 +76,14 @@ def editar_cliente(request, id):
             endereco_novo = endereco.Endereco(rua=rua, numero=numero, complemento=complemento, bairro=bairro,
                                               cidade=cidade, pais=pais)
 
-            endereco_service.editar_endereco(endereco_antigo,endereco_novo)
-            cliente_novo = cliente.Cliente(nome=nome, sexo=sexo, data_nascimento=data_nascimento,
-                                           email=email, profissao=profissao, endereco=cliente_antigo.endereco.id)
+            if cliente_antigo.endereco == None:
+                endereco_bd = endereco_service.cadastrar_endereco(endereco_novo)
+                cliente_novo = cliente.Cliente(nome=nome, sexo=sexo, data_nascimento=data_nascimento,
+                                               email=email, profissao=profissao, endereco=endereco_bd)
+            else:
+                endereco_service.editar_endereco(endereco_antigo, endereco_novo)
+                cliente_novo = cliente.Cliente(nome=nome, sexo=sexo, data_nascimento=data_nascimento,
+                                               email=email, profissao=profissao, endereco=cliente_antigo.endereco)
             cliente_service.editar_cliente(cliente_antigo, cliente_novo)
             return redirect('listar_clientes')
 
