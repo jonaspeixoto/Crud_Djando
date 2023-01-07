@@ -23,7 +23,6 @@ def inserir_cliente(request):
         if form_cliente.is_valid():
             nome = form_cliente.cleaned_data["nome"]
             sexo = form_cliente.cleaned_data["sexo"]
-            print(sexo)
             data_nascimento = form_cliente.cleaned_data["data_nascimento"]
             email = form_cliente.cleaned_data["email"]
             profissao = form_cliente.cleaned_data["profissao"]
@@ -54,24 +53,41 @@ def listar_cliente_id(request, id):
 
 
 def editar_cliente(request, id):
-    clientes = cliente_service.listar_cliente_id(id)
-    form = ClientForm(request.POST or None, instance=clientes)
-    if form.is_valid():
-        nome = form.cleaned_data["nome"]
-        sexo = form.cleaned_data["sexo"]
-        data_nascimento = form.cleaned_data["data_nascimento"]
-        email = form.cleaned_data["email"]
-        profissao = form.cleaned_data["profissao"]
-        cliente_novo = cliente.Cliente(nome=nome, sexo=sexo, data_nascimento=data_nascimento,
-                                       email=email, profissao=profissao)
-        cliente_service.editar_cliente(clientes, cliente_novo)
-        return redirect('listar_clientes')
-    return render(request, 'clientes/form_clientes.html', {'form': form})
+    cliente_antigo = cliente_service.listar_cliente_id(id)
+    endereco_antigo = endereco_service.listar_endereco_id(cliente_antigo.endereco.id)
+    form_cliente = ClientForm(request.POST or None, instance=cliente_antigo)
+    form_endereco = EnderecoForm(request.POST or None, instance=endereco_antigo)
+    if form_cliente.is_valid():
+        nome = form_cliente.cleaned_data["nome"]
+        sexo = form_cliente.cleaned_data["sexo"]
+        data_nascimento = form_cliente.cleaned_data["data_nascimento"]
+        email = form_cliente.cleaned_data["email"]
+        profissao = form_cliente.cleaned_data["profissao"]
+        if form_endereco.is_valid():
+            rua = form_endereco.cleaned_data["rua"]
+            numero = form_endereco.cleaned_data["numero"]
+            complemento = form_endereco.cleaned_data["complemento"]
+            bairro = form_endereco.cleaned_data["bairro"]
+            cidade = form_endereco.cleaned_data["cidade"]
+            pais = form_endereco.cleaned_data["pais"]
+            endereco_novo = endereco.Endereco(rua=rua, numero=numero, complemento=complemento, bairro=bairro,
+                                              cidade=cidade, pais=pais)
+
+            endereco_service.editar_endereco(endereco_antigo,endereco_novo)
+            cliente_novo = cliente.Cliente(nome=nome, sexo=sexo, data_nascimento=data_nascimento,
+                                           email=email, profissao=profissao, endereco=cliente_antigo.endereco.id)
+            cliente_service.editar_cliente(cliente_antigo, cliente_novo)
+            return redirect('listar_clientes')
+
+    return render(request, 'clientes/form_clientes.html', {'form_cliente': form_cliente,'form_endereco':form_endereco})
 
 
 def remover_cliente(request, id):
     clientes = cliente_service.listar_cliente_id(id)
+    endereco = endereco_service.listar_endereco_id(clientes.endereco.id)
+
     if request.method == "POST":
         cliente_service.remover_cliente(clientes)
+        endereco_service.remover_endereco(endereco)
         return redirect('listar_clientes')
     return render(request, 'clientes/confirma_exclusao.html', {'cliente': clientes})
